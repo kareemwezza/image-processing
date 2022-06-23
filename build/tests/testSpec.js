@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = __importDefault(require("../index"));
 const supertest_1 = __importDefault(require("supertest"));
 const resize_1 = __importDefault(require("../utils/resize"));
+const errorHandler_1 = require("../middlewares/errorHandler");
 const request = (0, supertest_1.default)(index_1.default);
 describe('This suit is for testing our api to process images 😗', () => {
     it('Test Entry endpoint status', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -24,9 +25,13 @@ describe('This suit is for testing our api to process images 😗', () => {
     it('Test our Resizing Image function', () => __awaiter(void 0, void 0, void 0, function* () {
         expect(yield (0, resize_1.default)('fjord', '500', '500')).toBeTruthy();
     }));
-    it('Test our Resizing Image function when fails', () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(yield (0, resize_1.default)('fjossrd', '500', '500'));
-        expect(yield (0, resize_1.default)('fjossrd', '500', '500')).toBe('Sorry🙃! No Such Image Name Found In Our Records.');
+    it('Test our Resizing Image function to throw an error', () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            yield (0, resize_1.default)('as', '500', '500');
+        }
+        catch (error) {
+            expect(error).toBeInstanceOf(errorHandler_1.CustomeError);
+        }
     }));
     it('Test our API Image when fails', () => __awaiter(void 0, void 0, void 0, function* () {
         const respone = yield request.get('/images/resize?name=unknownImage&height=800&width=500');
